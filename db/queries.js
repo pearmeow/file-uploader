@@ -1,4 +1,20 @@
 const client = require("./client");
-// require pool
 
-// do some operations with prisma client here
+const createUser = async (username, password) => {
+    const newFolder = await client.folder.create({
+        data: {
+            name: username,
+        },
+    });
+    client.user.create({
+        data: {
+            username: username,
+            password: password,
+            folderId: newFolder.id,
+        },
+    });
+};
+
+module.exports = {
+    createUser,
+};
