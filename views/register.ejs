@@ -6,17 +6,16 @@
     <title><%= title %></title>
 </head>
 <body>
-        <form action="/" method="POST">
-            <p>Log in</p>
+        <form action="/register" method="POST">
+            <p>Register</p>
             <label for="username">Username</label>
             <input id="username" name="username" type="text">
             <label for="password">Password</label>
             <input id="password" name="password" type="password">
+            <label for="confirm">Confirm password</label>
+            <input id="confirm" name="confirm" type="password">
             <button type="submit">Submit</button>
         </form>
-        <a href="/register">Register</a>
-        <p>Only show stuff below when user is logged in</p>
-        <a href="/">Go to folders (wip)</a>
-        <a href="/logout">Log out</a>
+        <a href="/">Back to home</a>
 </body>
 </html>
