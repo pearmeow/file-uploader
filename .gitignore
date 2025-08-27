@@ -25,3 +25,6 @@ dist-ssr
 
 # Environemnt variables
 .env
+
+# And prisma src
+src/
