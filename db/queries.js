@@ -6,7 +6,7 @@ const createUser = async (username, password) => {
             name: username,
         },
     });
-    client.user.create({
+    await client.user.create({
         data: {
             username: username,
             password: password,
