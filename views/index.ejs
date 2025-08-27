@@ -6,17 +6,19 @@
     <title><%= title %></title>
 </head>
 <body>
-        <form action="/" method="POST">
-            <p>Log in</p>
-            <label for="username">Username</label>
-            <input id="username" name="username" type="text">
-            <label for="password">Password</label>
-            <input id="password" name="password" type="password">
-            <button type="submit">Submit</button>
-        </form>
+        <% if (!locals.currentUser) { %>
+            <form action="/" method="POST">
+                <p>Log in</p>
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password">
+                <button type="submit">Submit</button>
+            </form>
         <a href="/register">Register</a>
-        <p>Only show stuff below when user is logged in</p>
-        <a href="/">Go to folders (wip)</a>
-        <a href="/logout">Log out</a>
+        <% } else { %>
+            <a href="/">Go to folders (wip)</a>
+            <a href="/logout">Log out</a>
+        <% } %>
 </body>
 </html>
