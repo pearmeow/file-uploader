@@ -1,4 +1,5 @@
-const db = require("");
+const db = require("../db/queries");
+const passport = require("passport");
 
 const getLogin = (req, res) => {
     res.render("index", { title: "Log in" });
@@ -13,13 +14,14 @@ const postRegister = async (req, res) => {
     res.redirect("/");
 };
 
-// handled in passport, not here
-const postLogin = async (req, res) => {
-    res.redirect("/");
-};
+const postLogin = passport.authenticate("local", {
+    failureMessage: "Username or password wrong",
+    successRedirect: "/folder",
+});
 
 module.exports = {
     getLogin,
     getRegister,
     postRegister,
+    postLogin,
 };

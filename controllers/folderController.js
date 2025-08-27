@@ -1,4 +1,4 @@
-const db = require(""); // require db later
+const db = require("../db/queries"); // require db later
 
 const getFolder = async (req, res) => {
     res.render("folder", { title: "Folder", folderId: 0 }); // render the user's default folderid as well
