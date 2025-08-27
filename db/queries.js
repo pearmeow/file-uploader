@@ -15,6 +15,24 @@ const createUser = async (username, password) => {
     });
 };
 
+const getUserById = async (id) => {
+    return await client.user.findUnique({
+        where: {
+            id: id,
+        },
+    });
+};
+
+const getUserByUsername = async (username) => {
+    return await client.user.findUnique({
+        where: {
+            username: username,
+        },
+    });
+};
+
 module.exports = {
     createUser,
+    getUserById,
+    getUserByUsername,
 };

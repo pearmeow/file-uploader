@@ -2,7 +2,6 @@ const passport = require("passport");
 const db = require("../db/queries");
 const LocalStrategy = require("passport-local").Strategy;
 const authenticate = require("../utils/authenticate");
-const session = require("./sessionConfig");
 
 function serializer(user, done) {
     done(null, user.id);
@@ -10,7 +9,7 @@ function serializer(user, done) {
 
 async function deserializer(id, done) {
     try {
-        // use db to get user from id
+        const user = await db.getUserById(id);
         done(null, user);
     } catch (err) {
         done(err);
@@ -19,7 +18,7 @@ async function deserializer(id, done) {
 
 async function verify(username, password, done) {
     try {
-        // use db to get the user from username
+        const user = await db.getUserByUsername(username);
         if (!user) {
             return done(null, false, { message: "Bad username" });
         }
@@ -32,6 +31,6 @@ async function verify(username, password, done) {
     }
 }
 
-passport.deserializeUser(serializer);
-passport.serializeUser(deserializer);
 passport.use(new LocalStrategy(verify));
+passport.deserializeUser(deserializer);
+passport.serializeUser(serializer);
