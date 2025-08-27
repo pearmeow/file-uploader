@@ -1,5 +1,8 @@
 const db = require("../db/queries");
 const passport = require("passport");
+const { hashPassword } = require("../utils/authenticate");
+const { validationResult, matchedData } = require("express-validator");
+const { validatePassword } = require("../middlewares/validators");
 
 const getLogin = (req, res) => {
     res.render("index", { title: "Log in" });
@@ -9,10 +12,23 @@ const getRegister = (req, res) => {
     res.render("register", { title: "Register" });
 };
 
-const postRegister = async (req, res) => {
-    // send query to db
-    res.redirect("/");
-};
+const postRegister = [
+    [validatePassword, validateUsername],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.render("register", {
+                title: "Register",
+                errors: errors.array(),
+            });
+        }
+        const data = matchedData(req);
+        const username = data.username;
+        const hashedPass = hashPassword(data.password);
+        db.createUser(username, hashedPass);
+        res.redirect("/", { title: "Register" });
+    },
+];
 
 const postLogin = passport.authenticate("local", {
     failureMessage: "Username or password wrong",
