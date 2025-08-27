@@ -1,7 +1,7 @@
 {
-  "name": "nodejs project template",
+  "name": "file uploader",
   "version": "0.0.0",
-  "description": "node project template",
+  "description": "file uploader",
   "main": "index.js",
   "scripts": {
     "dev": "node --watch app.js",
