@@ -2,7 +2,11 @@ const db = require("../db/queries");
 const passport = require("passport");
 const { hashPassword } = require("../utils/authenticate");
 const { validationResult, matchedData } = require("express-validator");
-const { validatePassword } = require("../middlewares/validators");
+const {
+    validatePassword,
+    validateConfirm,
+    validateUsername,
+} = require("../middlewares/validators");
 
 const getLogin = (req, res) => {
     res.render("index", { title: "Log in" });
@@ -13,7 +17,7 @@ const getRegister = (req, res) => {
 };
 
 const postRegister = [
-    [validatePassword, validateUsername],
+    [validateUsername, validatePassword, validateConfirm],
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -26,7 +30,7 @@ const postRegister = [
         const username = data.username;
         const hashedPass = hashPassword(data.password);
         db.createUser(username, hashedPass);
-        res.redirect("/", { title: "Register" });
+        res.redirect("/");
     },
 ];
 

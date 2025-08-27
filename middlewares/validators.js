@@ -19,7 +19,15 @@ const validateUsername = body("username")
     .isLength({ min: 3, max: 32 })
     .withMessage("Username must be between 3 and 32 characters");
 
+const validateConfirm = body("confirm").custom((value, { req }) => {
+    if (value !== req.body.password) {
+        throw new Error("Passwords must match");
+    }
+    return value;
+});
+
 module.exports = {
-    validatePassword,
     validateUsername,
+    validatePassword,
+    validateConfirm,
 };
