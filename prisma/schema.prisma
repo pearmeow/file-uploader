@@ -17,10 +17,12 @@ model User {
 }
 
 model Folder {
-    id           Int    @id @default(autoincrement())
+    id           Int      @id @default(autoincrement())
     name         String
     user         User?
-    parentFolder Int?
+    parentId     Int?
+    parentFolder Folder?  @relation("Subfolders", fields: [parentId], references: [id])
+    subfolders   Folder[] @relation("Subfolders")
     files        File[]
 }
 
