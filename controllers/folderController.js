@@ -3,7 +3,7 @@ const { validationResult, matchedData } = require("express-validator");
 const {
     validateIdFactory,
     validateQueryId,
-    validateFolderName,
+    validateNameFactory,
 } = require("../middlewares/validators");
 
 const isAuthenticated = async (req, res, next) => {
@@ -50,7 +50,7 @@ const getFolder = [
 const createFolder = [
     isAuthenticated,
     validateIdFactory("parentId"),
-    validateFolderName,
+    validateNameFactory("name"),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -60,7 +60,7 @@ const createFolder = [
                 errors: errors.array(),
             });
         }
-        const folder = await db.getFolderById(Number(req.body.parentId));
+        folder = await db.getFolderById(Number(req.body.parentId));
         if (folder.userId !== req.user.id) {
             return res.render("folder", {
                 title: "You do not have access to this folder!",
@@ -78,7 +78,24 @@ const createFolder = [
             req.user.id,
             req.body.name,
         );
-        res.render("folder", { title: newFolder.name, folder: newFolder });
+        folder = await db.getFolderById(Number(req.body.parentId));
+        res.render("folder", { title: folder.name, folder: folder });
+    },
+];
+
+const renameFolder = [
+    isAuthenticated,
+    validateIdFactory("id"),
+    validateNameFactory("name"),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render("folder", {
+                title: "Error",
+                folder: null,
+                errors: errors.array(),
+            });
+        }
     },
 ];
 
@@ -94,8 +111,23 @@ const deleteFolder = [
                 errors: errors.array(),
             });
         }
+        const folder = await db.getFolderById(Number(req.body.id));
+        if (req.user.id !== folder.userId || !folder) {
+            return res.render("folder", {
+                title: "Can't delete a folder you don't own!",
+                folder: null,
+            });
+        }
+        const parentId = folder.parentId;
+        await db.deleteFolderById(Number(req.body.id));
+        const parentFolder = await db.getFolderById(parentId);
+        return res.render("folder", {
+            title: parentFolder.name,
+            folder: parentFolder,
+        });
     },
 ];
+
 const uploadFile = [
     isAuthenticated,
     validateIdFactory("parentId"),
@@ -131,4 +163,5 @@ module.exports = {
     getFolder,
     createFolder,
     uploadFile,
+    deleteFolder,
 };
