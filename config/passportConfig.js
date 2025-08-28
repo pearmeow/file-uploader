@@ -22,7 +22,7 @@ async function verify(username, password, done) {
         if (!user) {
             return done(null, false, { message: "Bad username" });
         }
-        if (!authenticate.validPassword(password, user.password)) {
+        if (!(await authenticate.validPassword(password, user.password))) {
             return done(null, false, { message: "Bad password" });
         }
         return done(null, user);

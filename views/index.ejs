@@ -9,15 +9,16 @@
         <% if (!locals.currentUser) { %>
             <form action="/" method="POST">
                 <p>Log in</p>
+                <%- include("./partials/errors") %>
                 <label for="username">Username</label>
                 <input id="username" name="username" type="text">
                 <label for="password">Password</label>
                 <input id="password" name="password" type="password">
                 <button type="submit">Submit</button>
             </form>
-        <a href="/register">Register</a>
+            <a href="/register">Register</a>
         <% } else { %>
-            <a href="/">Go to folders (wip)</a>
+            <a href="/folder">Go to folders (wip)</a>
             <a href="/logout">Log out</a>
         <% } %>
 </body>
