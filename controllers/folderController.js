@@ -19,9 +19,11 @@ const getFolder = async (req, res) => {
     res.render("folder", { title: "Folder" });
 };
 
+// TODO: add checks for folder name and id
 const createFolder = async (req, res) => {
-    // use db create folder
-    res.render("folder", { title: "Folder", folderId: 0 }); // render yourself again to show newly created folder
+    // TODO: use db create folder
+    // change folder to not null
+    res.render("folder", { title: "Folder", folder: null });
 };
 
 const uploadFile = async (req, res) => {
