@@ -24,6 +24,7 @@ app.use(locals.setUser);
 
 app.use("/folder", folderRouter);
 app.use("/", indexRouter);
+app.get("/{*splat}", (req, res) => res.render("404"));
 
 const PORT = 3000;
 
