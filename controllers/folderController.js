@@ -9,36 +9,36 @@ const {
 const getFolder = [
     validateQueryId,
     async (req, res) => {
-        if (req.isAuthenticated()) {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.render("folder", {
-                    title: "Error",
-                    folder: null,
-                    errors: errors.array(),
-                });
-            }
-            let folder;
-            if (req.params.folderId) {
-                folder = await db.getFolderById(Number(req.params.folderId));
-            } else {
-                folder = await db.getFolderById(req.user.folderId);
-            }
-            if (!folder) {
-                return res.render("folder", {
-                    title: "Folder not found",
-                    folder: null,
-                });
-            }
-            if (folder.userId !== req.user.id) {
-                return res.render("folder", {
-                    title: "You do not have access to this folder!",
-                    folder: null,
-                });
-            }
-            return res.render("folder", { title: folder.name, folder: folder });
+        if (!req.isAuthenticated()) {
+            return res.render("folder", { title: "Folder" });
         }
-        res.render("folder", { title: "Folder" });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render("folder", {
+                title: "Error",
+                folder: null,
+                errors: errors.array(),
+            });
+        }
+        let folder;
+        if (req.params.folderId) {
+            folder = await db.getFolderById(Number(req.params.folderId));
+        } else {
+            folder = await db.getFolderById(req.user.folderId);
+        }
+        if (!folder) {
+            return res.render("folder", {
+                title: "Folder not found",
+                folder: null,
+            });
+        }
+        if (folder.userId !== req.user.id) {
+            return res.render("folder", {
+                title: "You do not have access to this folder!",
+                folder: null,
+            });
+        }
+        return res.render("folder", { title: folder.name, folder: folder });
     },
 ];
 
@@ -76,10 +76,38 @@ const createFolder = [
     },
 ];
 
-const uploadFile = async (req, res) => {
-    // use db to upload file in folder
-    res.render("folder", { folderId: 0 });
-};
+const uploadFile = [
+    validateIdFactory("parentId"),
+    async (req, res) => {
+        if (!req.isAuthenticated()) {
+            return res.render("folder", { folderId: 0 });
+        }
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render("folder", {
+                title: "Error",
+                folder: null,
+                errors: errors.array(),
+            });
+        }
+        let folder = await db.getFolderById(Number(req.body.parentId));
+        if (folder.userId !== req.user.id) {
+            return res.render("folder", {
+                title: "You do not have access to this folder!",
+                folder: null,
+            });
+        }
+        if (!req.user) {
+            return res.render("folder", {
+                title: "You do not have access to this folder!",
+                folder: null,
+            });
+        }
+        await db.createFile(folder.id, req.body.name, req.body.url, 3);
+        folder = await db.getFolderById(Number(req.body.parentId));
+        return res.render("folder", { title: folder.name, folder: folder });
+    },
+];
 
 module.exports = {
     getFolder,
