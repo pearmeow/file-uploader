@@ -37,10 +37,15 @@ const validateQueryId = param("folderId")
     .isInt({ min: 0, max: Number.MAX_SAFE_INTEGER })
     .withMessage("Id must be nonnegative");
 
+const validateFolderName = body("name")
+    .isLength({ min: 1, max: 32 })
+    .withMessage("Folder name must be between 0 and 32 characters");
+
 module.exports = {
     validateUsername,
     validatePassword,
     validateConfirm,
     validateIdFactory,
     validateQueryId,
+    validateFolderName,
 };

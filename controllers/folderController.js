@@ -3,6 +3,7 @@ const { validationResult, matchedData } = require("express-validator");
 const {
     validateIdFactory,
     validateQueryId,
+    validateFolderName,
 } = require("../middlewares/validators");
 
 const getFolder = [
@@ -12,8 +13,9 @@ const getFolder = [
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.render("folder", {
-                    title: "Folder not found",
+                    title: "Error",
                     folder: null,
+                    errors: errors.array(),
                 });
             }
             let folder;
@@ -42,22 +44,24 @@ const getFolder = [
 
 const createFolder = [
     validateIdFactory("parentId"),
+    validateFolderName,
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("folder", {
-                title: "Folder not found",
+                title: "Error",
                 folder: null,
+                errors: errors.array(),
             });
         }
-        if (!req.user) {
+        const folder = await db.getFolderById(Number(req.body.parentId));
+        if (folder.userId !== req.user.id) {
             return res.render("folder", {
                 title: "You do not have access to this folder!",
                 folder: null,
             });
         }
-        const folder = await db.getFolderById(Number(req.body.parentId));
-        if (folder.userId !== req.user.id) {
+        if (!req.user) {
             return res.render("folder", {
                 title: "You do not have access to this folder!",
                 folder: null,
