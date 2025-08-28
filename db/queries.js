@@ -76,6 +76,14 @@ const createFile = async (parentId, name, url, size) => {
     });
 };
 
+const deleteFolderById = async (id) => {
+    return await client.folder.delete({
+        where: {
+            id: id,
+        },
+    });
+};
+
 module.exports = {
     createUser,
     getUserById,
@@ -83,4 +91,5 @@ module.exports = {
     getFolderById,
     createFolder,
     createFile,
+    deleteFolderById,
 };
