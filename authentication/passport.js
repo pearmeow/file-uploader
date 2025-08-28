@@ -13,7 +13,7 @@ async function deserializer(id, done) {
         if (user) {
             done(null, user);
         } else {
-            done(null, flase);
+            done(null, false);
         }
     } catch (err) {
         done(err);
