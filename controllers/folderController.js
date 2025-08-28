@@ -21,9 +21,25 @@ const getFolder = async (req, res) => {
 
 // TODO: add checks for folder name and id
 const createFolder = async (req, res) => {
-    // TODO: use db create folder
-    // change folder to not null
-    res.render("folder", { title: "Folder", folder: null });
+    if (!req.user) {
+        return res.render("folder", {
+            title: "You do not have access to this folder!",
+            folder: null,
+        });
+    }
+    const folder = await db.getFolderById(Number(req.body.parentId));
+    if (folder.userId !== req.user.id) {
+        return res.render("folder", {
+            title: "You do not have access to this folder!",
+            folder: null,
+        });
+    }
+    const newFolder = await db.createFolder(
+        folder.id,
+        req.user.id,
+        req.body.name,
+    );
+    res.render("folder", { title: newFolder.name, folder: newFolder });
 };
 
 const uploadFile = async (req, res) => {
