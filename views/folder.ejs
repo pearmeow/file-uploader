@@ -13,7 +13,18 @@
             <p>Subfolders</p>
             <ul>
                 <% folder.subfolders.forEach((elem) => { %>
-                    <li><a href="/folder/<%=elem.id%>"><%= elem.name %></a></li>
+                    <li>
+                        <a href="/folder/<%=elem.id%>"><%= elem.name %></a>
+                        <form action="/folder/rename" method="POST">
+                            <input type="hidden" name="id" value="<%= elem.id %>">
+                            <label for="name">Change name</label>
+                            <input id="name" type="text" name="name">
+                            <button type="submit">Submit</button>
+                        </form>
+                        <form action="/folder/delete" method="POST">
+                            <button type="submit" name="id" value="<%= elem.id %>">Delete</button>
+                        </form>
+                    </li>
                 <% }) %>
             </ul>
             <p>Files</p>
