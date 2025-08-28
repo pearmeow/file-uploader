@@ -1,4 +1,4 @@
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 
 const spaceTest = (value) => {
     if (/\ /.test(value)) {
@@ -32,9 +32,14 @@ const validateIdFactory = (idName) => {
         .withMessage("Id must be nonnegative");
 };
 
+const validateQueryId = param("folderId")
+    .isInt({ min: 0, max: Number.MAX_SAFE_INTEGER })
+    .withMessage("Id must be nonnegative");
+
 module.exports = {
     validateUsername,
     validatePassword,
     validateConfirm,
     validateIdFactory,
+    validateQueryId,
 };
