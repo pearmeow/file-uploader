@@ -26,8 +26,15 @@ const validateConfirm = body("confirm").custom((value, { req }) => {
     return value;
 });
 
+const validateIdFactory = (idName) => {
+    return body(idName)
+        .isInt({ min: 0, max: Number.MAX_SAFE_INTEGER })
+        .withMessage("Id must be nonnegative");
+};
+
 module.exports = {
     validateUsername,
     validatePassword,
     validateConfirm,
+    validateIdFactory,
 };
