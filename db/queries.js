@@ -45,8 +45,16 @@ const getFolderById = async (id) => {
             id: id,
         },
         include: {
-            files: true,
-            subfolders: true,
+            files: {
+                orderBy: {
+                    name: "asc",
+                },
+            },
+            subfolders: {
+                orderBy: {
+                    name: "asc",
+                },
+            },
         },
     });
 };
