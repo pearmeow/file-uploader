@@ -42,8 +42,10 @@ const postLogin = passport.authenticate("local", {
 
 const getLogout = (req, res, next) => {
     req.logout((err) => {
-        console.log(err);
-        next(err);
+        if (err) {
+            throw new Error(err);
+        }
+        next();
     });
     res.redirect("/");
 };
