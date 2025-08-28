@@ -65,10 +65,22 @@ const createFolder = async (parentId, userId, name) => {
     });
 };
 
+const createFile = async (parentId, name, url, size) => {
+    return await client.file.create({
+        data: {
+            folderId: parentId,
+            name: name || url,
+            url: url,
+            size: size,
+        },
+    });
+};
+
 module.exports = {
     createUser,
     getUserById,
     getUserByUsername,
     getFolderById,
     createFolder,
+    createFile,
 };
