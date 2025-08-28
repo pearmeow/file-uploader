@@ -31,8 +31,21 @@ const getUserByUsername = async (username) => {
     });
 };
 
+const getFolderById = async (id) => {
+    return await client.folder.findUnique({
+        where: {
+            id: id,
+        },
+        include: {
+            files: true,
+            subfolders: true,
+        },
+    });
+};
+
 module.exports = {
     createUser,
     getUserById,
     getUserByUsername,
+    getFolderById,
 };
