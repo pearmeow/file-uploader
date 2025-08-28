@@ -8,7 +8,7 @@ const getFolder = async (req, res) => {
         } else {
             folder = await db.getFolderById(req.user.folderId);
         }
-        if (folder.userId !== req.user.id) {
+        if (!folder || folder.userId !== req.user.id) {
             return res.render("folder", {
                 title: "You do not have access to this folder!",
                 folder: null,
