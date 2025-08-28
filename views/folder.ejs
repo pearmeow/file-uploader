@@ -6,7 +6,14 @@
     <title><%= title %></title>
 </head>
 <body>
-        <p>This page will contain a folder and its files</p>
-        <a href="/">Back to previous folder, or maybe the home folder? For now it just points back to home</a>
+        <h1><%= title %></h1>
+        <% if (locals.currentUser) { %>
+            <ul>
+            <li>We are logged in</li>
+            </ul>
+        <% } else { %>
+            <p>You do not have permission to view this page!</p>
+        <% } %>
+        <a href="/">Back to home</a>
 </body>
 </html>
