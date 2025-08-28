@@ -10,16 +10,27 @@
         <%- include("./partials/errors") %>
         <% if (locals.currentUser && locals.folder !== null) { %>
             <p>Folder: <%= locals.folder.name %></p>
-            <ul>
-                <% folder.files.forEach((elem) => { %>
-                    <li><%= elem.url %></li>
-                <% }) %>
-            </ul>
+            <p>Subfolders</p>
             <ul>
                 <% folder.subfolders.forEach((elem) => { %>
                     <li><a href="/folder/<%=elem.id%>"><%= elem.name %></a></li>
                 <% }) %>
             </ul>
+            <p>Files</p>
+            <ul>
+                <% folder.files.forEach((elem) => { %>
+                    <li><%= elem.url %></li>
+                <% }) %>
+            </ul>
+            <form action="/folder/file" method="POST">
+                <p>Upload new file</p>
+                <input type="hidden" name="parentId" value="<%= folder.id %>">
+                <label for="name">Name (Optional)</label>
+                <input id="name" type="text" name="name">
+                <label for="url">Url</label>
+                <input id="url" type="text" name="url">
+                <button type="submit">Submit</button>
+            </form>
             <form action="/folder" method="POST">
                 <p>Create new folder</p>
                 <input type="hidden" name="parentId" value="<%= folder.id %>">
