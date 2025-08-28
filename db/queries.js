@@ -51,9 +51,24 @@ const getFolderById = async (id) => {
     });
 };
 
+const createFolder = async (parentId, userId, name) => {
+    return await client.folder.create({
+        data: {
+            parentId: parentId,
+            userId: userId,
+            name: name,
+        },
+        include: {
+            files: true,
+            subfolders: true,
+        },
+    });
+};
+
 module.exports = {
     createUser,
     getUserById,
     getUserByUsername,
     getFolderById,
+    createFolder,
 };
