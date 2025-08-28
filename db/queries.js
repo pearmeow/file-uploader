@@ -6,11 +6,19 @@ const createUser = async (username, password) => {
             name: username,
         },
     });
-    await client.user.create({
+    const user = await client.user.create({
         data: {
             username: username,
             password: password,
             folderId: newFolder.id,
+        },
+    });
+    await client.folder.update({
+        where: {
+            id: newFolder.id,
+        },
+        data: {
+            userId: user.id,
         },
     });
 };
