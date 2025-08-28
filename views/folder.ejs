@@ -16,7 +16,7 @@
             </ul>
             <ul>
                 <% folder.subfolders.forEach((elem) => { %>
-                    <li><%= elem.name %></li>
+                    <li><a href="/folder/<%=elem.id%>"><%= elem.name %></a></li>
                 <% }) %>
             </ul>
             <form action="/folder" method="POST">
@@ -28,6 +28,11 @@
             </form>
         <% } else { %>
             <p>You do not have permission to view this page!</p>
+        <% } %>
+        <% if (locals.currentUser && locals.folder !== null) { %>
+            <% if (locals.folder.parentId) { %>
+                <a href="/folder/<%=locals.folder.parentId%>">Back one level</a>
+            <% } %>
         <% } %>
         <a href="/">Back to home</a>
 </body>
