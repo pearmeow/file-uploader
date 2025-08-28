@@ -7,7 +7,7 @@
 </head>
 <body>
         <h1><%= title %></h1>
-        <% if (locals.currentUser) { %>
+        <% if (locals.currentUser && locals.folder !== null) { %>
             <p>Folder: <%= locals.folder.name %></p>
             <ul>
                 <% folder.files.forEach((elem) => { %>
