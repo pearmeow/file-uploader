@@ -1,15 +1,19 @@
 File Uploader
 -------------
 
-File uploader made with NodeJS, Express, Prisma, and PostgreSQL
+File uploader made with NodeJS, Express, Prisma, PostgreSQL, and Multer
 
 Features
 --------
 
-- [ ] Authentication for users
-- [ ] Create folders and upload files
-- [ ] Delete folders and delete files
-- [ ] Good styling
+- [x] Authentication for users
+- [x] Create folders 
+- [x] Delete folders
+- [x] Rename folders
+- [x] Folders within folders within folders
+- [x] Upload files
+- [ ] Delete files
+- [ ] Good styling (this is not happening)
 
 How to use this project
 -----------------------
