@@ -33,6 +33,7 @@ const validateIdFactory = (idName) => {
 };
 
 const validateQueryId = param("folderId")
+    .optional()
     .isInt({ min: 0, max: Number.MAX_SAFE_INTEGER })
     .withMessage("Id must be nonnegative");
 
