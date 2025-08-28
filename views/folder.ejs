@@ -8,9 +8,24 @@
 <body>
         <h1><%= title %></h1>
         <% if (locals.currentUser) { %>
+            <p>Folder: <%= locals.folder.name %></p>
             <ul>
-            <li>We are logged in</li>
+                <% folder.files.forEach((elem) => { %>
+                    <li><%= elem.url %></li>
+                <% }) %>
             </ul>
+            <ul>
+                <% folder.subfolders.forEach((elem) => { %>
+                    <li><%= elem.name %></li>
+                <% }) %>
+            </ul>
+            <form action="/folder" method="POST">
+                <p>Create new folder</p>
+                <input type="hidden" name="parentId" value="<%= folder.id %>">
+                <label for="name">Name</label>
+                <input id="name" type="text" name="name">
+                <button type="submit">Submit</button>
+            </form>
         <% } else { %>
             <p>You do not have permission to view this page!</p>
         <% } %>
