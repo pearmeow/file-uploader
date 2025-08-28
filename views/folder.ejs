@@ -30,7 +30,7 @@
             <p>Files</p>
             <ul>
                 <% folder.files.forEach((elem) => { %>
-                    <li><%= elem.url %></li>
+                    <li><%= elem.name %></li>
                 <% }) %>
             </ul>
             <form action="/folder/file" method="POST">
