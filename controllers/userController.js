@@ -40,17 +40,12 @@ const postLogin = passport.authenticate("local", {
     successRedirect: "/",
 });
 
-const getLogout = (req, res, next) => {
+const getLogout = (req, res) => {
     req.logout((err) => {
         if (err) {
             throw new Error(err);
         }
     });
-    // req.session.destroy((err) => {
-    //     if (err) {
-    //         throw new Error(err);
-    //     }
-    // });
     res.redirect("/");
 };
 
