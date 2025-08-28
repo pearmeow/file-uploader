@@ -6,12 +6,16 @@ const {
     validateFolderName,
 } = require("../middlewares/validators");
 
+const isAuthenticated = async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.render("folder", { title: "Folder" });
+    }
+};
+
 const getFolder = [
+    isAuthenticated,
     validateQueryId,
     async (req, res) => {
-        if (!req.isAuthenticated()) {
-            return res.render("folder", { title: "Folder" });
-        }
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("folder", {
@@ -43,6 +47,7 @@ const getFolder = [
 ];
 
 const createFolder = [
+    isAuthenticated,
     validateIdFactory("parentId"),
     validateFolderName,
     async (req, res) => {
@@ -76,12 +81,24 @@ const createFolder = [
     },
 ];
 
+const deleteFolder = [
+    isAuthenticated,
+    validateIdFactor("id"),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render("folder", {
+                title: "Error",
+                folder: null,
+                errors: errors.array(),
+            });
+        }
+    },
+];
 const uploadFile = [
+    isAuthenticated,
     validateIdFactory("parentId"),
     async (req, res) => {
-        if (!req.isAuthenticated()) {
-            return res.render("folder", { folderId: 0 });
-        }
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("folder", {
