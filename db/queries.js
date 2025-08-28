@@ -76,6 +76,17 @@ const createFile = async (parentId, name, url, size) => {
     });
 };
 
+const renameFolderById = async (id, name) => {
+    return await client.folder.update({
+        where: {
+            id: id,
+        },
+        data: {
+            name: name,
+        },
+    });
+};
+
 const deleteFolderById = async (id) => {
     return await client.folder.delete({
         where: {
@@ -92,4 +103,5 @@ module.exports = {
     createFolder,
     createFile,
     deleteFolderById,
+    renameFolderById,
 };

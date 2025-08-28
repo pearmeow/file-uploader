@@ -96,6 +96,20 @@ const renameFolder = [
                 errors: errors.array(),
             });
         }
+        const folder = await db.getFolderById(Number(req.body.id));
+        if (req.user.id !== folder.userId || !folder) {
+            return res.render("folder", {
+                title: "Can't rename a folder you don't own!",
+                folder: null,
+            });
+        }
+        const parentId = folder.parentId;
+        await db.renameFolderById(Number(req.body.id), req.body.name);
+        const parentFolder = await db.getFolderById(parentId);
+        return res.render("folder", {
+            title: parentFolder.name,
+            folder: parentFolder,
+        });
     },
 ];
 
@@ -164,4 +178,5 @@ module.exports = {
     createFolder,
     uploadFile,
     deleteFolder,
+    renameFolder,
 };
