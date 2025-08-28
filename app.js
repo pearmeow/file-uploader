@@ -3,7 +3,7 @@ const path = require("node:path");
 const indexRouter = require("./routes/indexRouter");
 const folderRouter = require("./routes/folderRouter");
 const passport = require("passport");
-const session = require("./config/sessionConfig");
+const session = require("./authentication/session");
 const locals = require("./middlewares/locals");
 
 const app = express();
@@ -17,7 +17,7 @@ app.use(express.static(assetsPath));
 
 app.use(session);
 app.use(passport.session());
-require("./config/passportConfig");
+require("./authentication/passport");
 
 // add user to locals so it's accessible in views
 app.use(locals.setUser);
