@@ -37,7 +37,7 @@ const postRegister = [
 const postLogin = passport.authenticate("local", {
     failureMessage: "Username or password wrong",
     failureRedirect: "/",
-    successRedirect: "/folder",
+    successRedirect: "/",
 });
 
 const getLogout = (req, res, next) => {
