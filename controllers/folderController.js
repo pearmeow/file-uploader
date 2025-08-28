@@ -6,10 +6,11 @@ const {
     validateFolderName,
 } = require("../middlewares/validators");
 
-const isAuthenticated = async (req, res) => {
+const isAuthenticated = async (req, res, next) => {
     if (!req.isAuthenticated()) {
         return res.render("folder", { title: "Folder" });
     }
+    next();
 };
 
 const getFolder = [
@@ -83,7 +84,7 @@ const createFolder = [
 
 const deleteFolder = [
     isAuthenticated,
-    validateIdFactor("id"),
+    validateIdFactory("id"),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
