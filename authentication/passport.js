@@ -10,7 +10,11 @@ function serializer(user, done) {
 async function deserializer(id, done) {
     try {
         const user = await db.getUserById(id);
-        done(null, user);
+        if (user) {
+            done(null, user);
+        } else {
+            done(null, flase);
+        }
     } catch (err) {
         done(err);
     }
