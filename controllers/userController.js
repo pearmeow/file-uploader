@@ -17,18 +17,22 @@ const getRegister = (req, res) => {
 };
 
 const postRegister = [
-    [validateUsername, validatePassword, validateConfirm],
+    validateUsername,
+    validatePassword,
+    validateConfirm,
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            res.render("register", {
+            console.log(errors);
+            console.log("hi register doesn't work lmao");
+            return res.render("register", {
                 title: "Register",
                 errors: errors.array(),
             });
         }
         const data = matchedData(req);
         const username = data.username;
-        const hashedPass = hashPassword(data.password);
+        const hashedPass = await hashPassword(data.password);
         db.createUser(username, hashedPass);
         res.redirect("/");
     },

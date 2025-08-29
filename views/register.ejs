@@ -8,6 +8,7 @@
 <body>
         <form action="/register" method="POST">
             <p>Register</p>
+            <%- include("./partials/errors.ejs") %>
             <label for="username">Username</label>
             <input id="username" name="username" type="text">
             <label for="password">Password</label>
