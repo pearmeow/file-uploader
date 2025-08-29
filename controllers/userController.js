@@ -23,8 +23,6 @@ const postRegister = [
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log(errors);
-            console.log("hi register doesn't work lmao");
             return res.render("register", {
                 title: "Register",
                 errors: errors.array(),
