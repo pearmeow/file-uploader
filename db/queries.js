@@ -77,7 +77,7 @@ const createFile = async (parentId, name, path, size, url) => {
     return await client.file.create({
         data: {
             folderId: parentId,
-            name: name || url,
+            name: name,
             path: path,
             size: size,
             url: url,
