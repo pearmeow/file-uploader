@@ -12,17 +12,17 @@ Features
 - [x] Rename folders
 - [x] Folders within folders within folders
 - [x] Upload files
-- [ ] Delete files
-- [ ] Good styling (this is not happening)
+- [x] Delete files
 
 How to use this project
 -----------------------
 
-Clone this repo and run `node app`.
-I'll edit this later lol
+Visit the live link [here](https://file-uploader-production-2820.up.railway.app/) if it hasn't expired yet!  
+Or, clone the repo, make sure postgresql is running on port 5432, add a .env file with DATABASE_URL, SUPABASE_URL, SUPABASE_KEY, and COOKIE_SECRET, and run `npm install && node app`
 
 Known Limitations
 -----------------
+
 
 Credits
 -------

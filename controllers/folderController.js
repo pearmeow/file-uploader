@@ -1,6 +1,6 @@
 const db = require("../db/queries");
 const supabase = require("../db/supabase");
-const { validationResult, matchedData } = require("express-validator");
+const { validationResult } = require("express-validator");
 const {
     validateIdFactory,
     validateQueryId,
@@ -33,7 +33,7 @@ const isAuthenticated = async (req, res, next) => {
 const getFolder = [
     isAuthenticated,
     validateQueryId("folderId"),
-    async (req, res) => {
+    async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("folder", {
@@ -43,10 +43,14 @@ const getFolder = [
             });
         }
         let folder;
-        if (req.params.folderId) {
-            folder = await db.getFolderById(Number(req.params.folderId));
-        } else {
-            folder = await db.getFolderById(req.user.folderId);
+        try {
+            if (req.params.folderId) {
+                folder = await db.getFolderById(Number(req.params.folderId));
+            } else {
+                folder = await db.getFolderById(req.user.folderId);
+            }
+        } catch (err) {
+            return next(err);
         }
         if (!folder) {
             return res.render("folder", {
@@ -68,7 +72,7 @@ const createFolder = [
     isAuthenticated,
     validateIdFactory("parentId"),
     validateNameFactory("name"),
-    async (req, res) => {
+    async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("folder", {
@@ -77,13 +81,21 @@ const createFolder = [
                 errors: errors.array(),
             });
         }
-        folder = await db.getFolderById(Number(req.body.parentId));
+        try {
+            folder = await db.getFolderById(Number(req.body.parentId));
+        } catch (err) {
+            return next(err);
+        }
         if (!folder || folder.userId !== req.user.id) {
             return res.redirect("/noaccess");
         }
-        await db.createFolder(folder.id, req.user.id, req.body.name);
-        folder = await db.getFolderById(Number(req.body.parentId));
-        res.redirect(`/folder/${req.body.parentId}`);
+        try {
+            await db.createFolder(folder.id, req.user.id, req.body.name);
+            folder = await db.getFolderById(Number(req.body.parentId));
+            res.redirect(`/folder/${req.body.parentId}`);
+        } catch (err) {
+            return next(err);
+        }
     },
 ];
 
@@ -91,7 +103,7 @@ const renameFolder = [
     isAuthenticated,
     validateIdFactory("id"),
     validateNameFactory("name"),
-    async (req, res) => {
+    async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("folder", {
@@ -100,24 +112,28 @@ const renameFolder = [
                 errors: errors.array(),
             });
         }
-        const folder = await db.getFolderById(Number(req.body.id));
-        if (!folder || req.user.id !== folder.userId || !folder) {
-            return res.redirect("/noaccess");
+        try {
+            const folder = await db.getFolderById(Number(req.body.id));
+            if (!folder || req.user.id !== folder.userId || !folder) {
+                return res.redirect("/noaccess");
+            }
+            const parentId = folder.parentId;
+            await db.renameFolderById(Number(req.body.id), req.body.name);
+            const parentFolder = await db.getFolderById(parentId);
+            return res.render("folder", {
+                title: parentFolder.name,
+                folder: parentFolder,
+            });
+        } catch (err) {
+            return next(err);
         }
-        const parentId = folder.parentId;
-        await db.renameFolderById(Number(req.body.id), req.body.name);
-        const parentFolder = await db.getFolderById(parentId);
-        return res.render("folder", {
-            title: parentFolder.name,
-            folder: parentFolder,
-        });
     },
 ];
 
 const deleteFolder = [
     isAuthenticated,
     validateIdFactory("id"),
-    async (req, res) => {
+    async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("folder", {
@@ -126,17 +142,21 @@ const deleteFolder = [
                 errors: errors.array(),
             });
         }
-        const folder = await db.getFolderById(Number(req.body.id));
-        if (req.user.id !== folder.userId || !folder) {
-            return res.redirect("/noaccess");
+        try {
+            const folder = await db.getFolderById(Number(req.body.id));
+            if (req.user.id !== folder.userId || !folder) {
+                return res.redirect("/noaccess");
+            }
+            const parentId = folder.parentId;
+            await db.deleteFolderById(Number(req.body.id));
+            const parentFolder = await db.getFolderById(parentId);
+            return res.render("folder", {
+                title: parentFolder.name,
+                folder: parentFolder,
+            });
+        } catch (err) {
+            next(err);
         }
-        const parentId = folder.parentId;
-        await db.deleteFolderById(Number(req.body.id));
-        const parentFolder = await db.getFolderById(parentId);
-        return res.render("folder", {
-            title: parentFolder.name,
-            folder: parentFolder,
-        });
     },
 ];
 
@@ -144,7 +164,7 @@ const uploadFile = [
     upload.single("somefile"),
     isAuthenticated,
     validateIdFactory("parentId"),
-    async (req, res) => {
+    async (req, res, next) => {
         if (!req.file) {
             return res.render("folder", {
                 title: "Error",
@@ -164,7 +184,12 @@ const uploadFile = [
                 errors: errors.array(),
             });
         }
-        let folder = await db.getFolderById(Number(req.body.parentId));
+        let folder;
+        try {
+            folder = await db.getFolderById(Number(req.body.parentId));
+        } catch (err) {
+            return next(err);
+        }
         if (folder.userId !== req.user.id) {
             return res.redirect("/noaccess");
         }
@@ -194,23 +219,27 @@ const uploadFile = [
             .getPublicUrl(storage.data.path, {
                 download: true,
             });
-        await db.createFile(
-            folder.id,
-            filename,
-            storage.data.path,
-            file.size / 1000,
-            downloadUrl.data.publicUrl,
-        );
+        try {
+            await db.createFile(
+                folder.id,
+                filename,
+                storage.data.path,
+                file.size / 1000,
+                downloadUrl.data.publicUrl,
+            );
 
-        folder = await db.getFolderById(Number(req.body.parentId));
-        return res.render("folder", { title: folder.name, folder: folder });
+            folder = await db.getFolderById(Number(req.body.parentId));
+            return res.render("folder", { title: folder.name, folder: folder });
+        } catch (err) {
+            next(err);
+        }
     },
 ];
 
 const deleteFile = [
     isAuthenticated,
     validateIdFactory("id"),
-    async (req, res) => {
+    async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("folder", {
@@ -219,7 +248,12 @@ const deleteFile = [
                 errors: errors.array(),
             });
         }
-        const file = await db.getFileById(Number(req.body.id));
+        let file;
+        try {
+            file = await db.getFileById(Number(req.body.id));
+        } catch (err) {
+            return next(err);
+        }
         if (!file || file.folder.userId !== req.user.id) {
             return res.redirect("/noaccess");
         }
@@ -230,24 +264,33 @@ const deleteFile = [
                 folder: null,
             });
         }
-        await db.deleteFileById(Number(req.body.id));
-        const folder = await db.getFolderById(file.folder.id);
-        return res.render("folder", {
-            title: folder.name,
-            folder: folder,
-        });
+        try {
+            await db.deleteFileById(Number(req.body.id));
+            const folder = await db.getFolderById(file.folder.id);
+            return res.render("folder", {
+                title: folder.name,
+                folder: folder,
+            });
+        } catch (err) {
+            next(err);
+        }
     },
 ];
 
 const getFile = [
     isAuthenticated,
     validateQueryId("fileId"),
-    async (req, res) => {
+    async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("file", { errors: errors.array() });
         }
-        const file = await db.getFileById(Number(req.params.fileId));
+        let file;
+        try {
+            file = await db.getFileById(Number(req.params.fileId));
+        } catch (err) {
+            return next(err);
+        }
         if (!file || file.folder.userId !== req.user.id) {
             return res.redirect("/noaccess");
         }
