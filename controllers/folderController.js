@@ -200,12 +200,12 @@ const uploadFile = [
         } else {
             filename = file.originalname;
         }
-        const storage = await supabase.storage.from("files").upload(
-            `${req.user.id}/${filename}`,
-            new File(file.buffer, filename, {
-                type: file.mimetype,
-            }),
-        );
+        const storedFile = new File(file.buffer, filename, {
+            type: file.mimetype,
+        });
+        const storage = await supabase.storage
+            .from("files")
+            .upload(`${req.user.id}/${filename}`, storedFile);
         if (storage.error) {
             return res.render("folder", {
                 title: storage.error.message,
