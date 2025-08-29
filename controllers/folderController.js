@@ -1,4 +1,5 @@
 const db = require("../db/queries");
+const supabase = require("../db/supabase");
 const { validationResult, matchedData } = require("express-validator");
 const {
     validateIdFactory,
@@ -191,8 +192,27 @@ const uploadFile = [
                 folder: null,
             });
         }
-        // TODO: Add supabase and change url to supabase url
-        await db.createFile(folder.id, req.body.name, "meow", 3);
+
+        const file = req.file;
+        const storage = await supabase.storage
+            .from("files")
+            .upload(
+                `${req.user.id}/${req.body.name + file.originalname.slice(-4) || file.originalname}`,
+                file.buffer,
+            );
+        if (storage.error) {
+            return res.render("folder", {
+                title: storage.error.message,
+                folder: null,
+            });
+        }
+        await db.createFile(
+            folder.id,
+            req.body.name + file.originalname.slice(-4),
+            storage.data.path,
+            file.size / 1000,
+        );
+
         folder = await db.getFolderById(Number(req.body.parentId));
         return res.render("folder", { title: folder.name, folder: folder });
     },
@@ -214,6 +234,13 @@ const deleteFile = [
         if (file.folder.userId !== req.user.id) {
             return res.render("folder", {
                 title: "Can't delete a file you don't own!",
+                folder: null,
+            });
+        }
+        const err = await supabase.storage.from("files").remove(file.url);
+        if (err.error) {
+            return res.render("folder", {
+                title: err.message,
                 folder: null,
             });
         }
