@@ -21,7 +21,7 @@
                             <input type="hidden" name="id" value="<%= elem.id %>">
                             <label for="name">Change name</label>
                             <input id="name" type="text" name="name">
-                            <button type="submit">Submit</button>
+                            <button type="submit">Change</button>
                         </form>
                         <form action="/folder/delete" method="POST">
                             <button type="submit" name="id" value="<%= elem.id %>">Delete</button>
@@ -47,16 +47,15 @@
                 <input type="hidden" name="parentId" value="<%= folder.id %>">
                 <label for="name">Name</label>
                 <input id="name" type="text" name="name">
-                <button type="submit">Submit</button>
+                <button type="submit">Create</button>
             </form>
             <form action="/folder/file" method="POST" enctype="multipart/form-data">
                 <h3>Upload new file</h3>
                 <input type="hidden" name="parentId" value="<%= folder.id %>">
                 <label for="name">Name (Optional)</label>
                 <input id="name" type="text" name="name">
-                <label for="somefile">New file</label>
                 <input id="somefile" type="file" name="somefile">
-                <button type="submit">Submit</button>
+                <button type="submit">Upload</button>
             </form>
         <% } %>
         <% if (locals.currentUser && locals.folder !== null) { %>
