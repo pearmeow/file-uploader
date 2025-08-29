@@ -6,6 +6,7 @@ const {
     validateQueryId,
     validateNameFactory,
 } = require("../middlewares/validators");
+const { File } = require("node:buffer");
 
 function fileFilter(req, file, cb) {
     // test if file extension has 3 characters
