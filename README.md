@@ -10,9 +10,11 @@ Features
 - [x] Create folders 
 - [x] Delete folders
 - [x] Rename folders
-- [x] Folders within folders within folders
+- [x] Folders within folders within folders within...
 - [x] Upload files
 - [x] Delete files
+- [x] File details
+- [x] Error handling
 
 How to use this project
 -----------------------
@@ -23,6 +25,9 @@ Or, clone the repo, make sure postgresql is running on port 5432, add a .env fil
 Known Limitations
 -----------------
 
+Spamming buttons may break things  
+The logout button may not work on the first press  
+Files can only be up to 1MB and must have a 3 char extension
 
 Credits
 -------
