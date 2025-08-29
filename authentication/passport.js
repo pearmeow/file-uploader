@@ -9,7 +9,7 @@ function serializer(user, done) {
 
 async function deserializer(id, done) {
     try {
-        const user = await db.getUserById(id);
+        const user = await db.getUserById(Number(id));
         if (user) {
             done(null, user);
         } else {
