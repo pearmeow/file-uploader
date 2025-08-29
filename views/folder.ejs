@@ -33,13 +33,13 @@
                     <li><%= elem.name %></li>
                 <% }) %>
             </ul>
-            <form action="/folder/file" method="POST">
+            <form action="/folder/file" method="POST" enctype="multipart/form-data">
                 <p>Upload new file</p>
                 <input type="hidden" name="parentId" value="<%= folder.id %>">
                 <label for="name">Name (Optional)</label>
                 <input id="name" type="text" name="name">
-                <label for="url">Url</label>
-                <input id="url" type="text" name="url">
+                <label for="somefile">New file</label>
+                <input id="somefile" type="file" name="somefile">
                 <button type="submit">Submit</button>
             </form>
             <form action="/folder" method="POST">
