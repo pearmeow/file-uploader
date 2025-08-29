@@ -203,9 +203,10 @@ const uploadFile = [
         const storedFile = new File(file.buffer, filename, {
             type: file.mimetype,
         });
+        const uniquePrefix = Date.now() + "-" + Math.round(Math.random() * 1e9);
         const storage = await supabase.storage
             .from("files")
-            .upload(`${req.user.id}/${filename}`, storedFile);
+            .upload(`${req.user.id}/${uniquePrefix + filename}`, storedFile);
         if (storage.error) {
             return res.render("folder", {
                 title: storage.error.message,
