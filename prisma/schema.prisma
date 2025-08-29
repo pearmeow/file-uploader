@@ -31,6 +31,7 @@ model File {
     id         Int      @id @default(autoincrement())
     folder     Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
     folderId   Int
+    path       String
     url        String
     name       String
     /// In kilobytes
