@@ -200,9 +200,12 @@ const uploadFile = [
         } else {
             filename = file.originalname;
         }
-        const storage = await supabase.storage
-            .from("files")
-            .upload(`${req.user.id}/${filename}`, file.buffer);
+        const storage = await supabase.storage.from("files").upload(
+            `${req.user.id}/${filename}`,
+            new File(file.buffer, filename, {
+                type: file.mimetype,
+            }),
+        );
         if (storage.error) {
             return res.render("folder", {
                 title: storage.error.message,
@@ -211,7 +214,9 @@ const uploadFile = [
         }
         const downloadUrl = supabase.storage
             .from("files")
-            .getPublicUrl(storage.data.path);
+            .getPublicUrl(storage.data.path, {
+                download: true,
+            });
         await db.createFile(
             folder.id,
             filename,
