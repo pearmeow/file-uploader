@@ -8,5 +8,6 @@ indexRouter.post("/", userController.postLogin);
 indexRouter.get("/register", userController.getRegister);
 indexRouter.post("/register", userController.postRegister);
 indexRouter.get("/logout", userController.getLogout);
+indexRouter.get("/noaccess", userController.getNoAccess);
 
 module.exports = indexRouter;

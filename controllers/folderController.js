@@ -25,7 +25,7 @@ const upload = multer({
 
 const isAuthenticated = async (req, res, next) => {
     if (!req.isAuthenticated()) {
-        return res.render("folder", { title: "Folder" });
+        return res.redirect("/noaccess");
     }
     next();
 };
@@ -79,20 +79,11 @@ const createFolder = [
         }
         folder = await db.getFolderById(Number(req.body.parentId));
         if (folder.userId !== req.user.id) {
-            return res.render("folder", {
-                title: "You do not have access to this folder!",
-                folder: null,
-            });
-        }
-        if (!req.user) {
-            return res.render("folder", {
-                title: "You do not have access to this folder!",
-                folder: null,
-            });
+            return res.redirect("/noaccess");
         }
         await db.createFolder(folder.id, req.user.id, req.body.name);
         folder = await db.getFolderById(Number(req.body.parentId));
-        res.render("folder", { title: folder.name, folder: folder });
+        res.redirect(`/folder/${req.body.parentId}`);
     },
 ];
 
@@ -111,10 +102,7 @@ const renameFolder = [
         }
         const folder = await db.getFolderById(Number(req.body.id));
         if (req.user.id !== folder.userId || !folder) {
-            return res.render("folder", {
-                title: "Can't rename a folder you don't own!",
-                folder: null,
-            });
+            return res.redirect("/noaccess");
         }
         const parentId = folder.parentId;
         await db.renameFolderById(Number(req.body.id), req.body.name);
@@ -140,10 +128,7 @@ const deleteFolder = [
         }
         const folder = await db.getFolderById(Number(req.body.id));
         if (req.user.id !== folder.userId || !folder) {
-            return res.render("folder", {
-                title: "Can't delete a folder you don't own!",
-                folder: null,
-            });
+            return res.redirect("/noaccess");
         }
         const parentId = folder.parentId;
         await db.deleteFolderById(Number(req.body.id));
@@ -181,16 +166,7 @@ const uploadFile = [
         }
         let folder = await db.getFolderById(Number(req.body.parentId));
         if (folder.userId !== req.user.id) {
-            return res.render("folder", {
-                title: "You do not have access to this folder!",
-                folder: null,
-            });
-        }
-        if (!req.user) {
-            return res.render("folder", {
-                title: "You do not have access to this folder!",
-                folder: null,
-            });
+            return res.redirect("/noaccess");
         }
 
         const file = req.file;
@@ -245,10 +221,7 @@ const deleteFile = [
         }
         const file = await db.getFileById(Number(req.body.id));
         if (file.folder.userId !== req.user.id) {
-            return res.render("folder", {
-                title: "Can't delete a file you don't own!",
-                folder: null,
-            });
+            return res.redirect("/noaccess");
         }
         const err = await supabase.storage.from("files").remove(file.path);
         if (err.error) {

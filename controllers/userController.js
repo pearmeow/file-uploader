@@ -49,10 +49,15 @@ const getLogout = (req, res) => {
     res.redirect("/");
 };
 
+const getNoAccess = (req, res) => {
+    res.render("noaccess");
+};
+
 module.exports = {
     getLogin,
     getRegister,
     postRegister,
     postLogin,
     getLogout,
+    getNoAccess,
 };
