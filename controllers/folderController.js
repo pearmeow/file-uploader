@@ -194,23 +194,30 @@ const uploadFile = [
         }
 
         const file = req.file;
+        let filename;
+        if (req.body.name) {
+            filename = req.body.name + file.originalname.slice(-4);
+        } else {
+            filename = file.originalname;
+        }
         const storage = await supabase.storage
             .from("files")
-            .upload(
-                `${req.user.id}/${req.body.name + file.originalname.slice(-4) || file.originalname}`,
-                file.buffer,
-            );
+            .upload(`${req.user.id}/${filename}`, file.buffer);
         if (storage.error) {
             return res.render("folder", {
                 title: storage.error.message,
                 folder: null,
             });
         }
+        const downloadUrl = supabase.storage
+            .from("files")
+            .getPublicUrl(storage.data.path);
         await db.createFile(
             folder.id,
-            req.body.name + file.originalname.slice(-4),
+            filename,
             storage.data.path,
             file.size / 1000,
+            downloadUrl.data.publicUrl,
         );
 
         folder = await db.getFolderById(Number(req.body.parentId));
@@ -237,7 +244,7 @@ const deleteFile = [
                 folder: null,
             });
         }
-        const err = await supabase.storage.from("files").remove(file.url);
+        const err = await supabase.storage.from("files").remove(file.path);
         if (err.error) {
             return res.render("folder", {
                 title: err.message,
