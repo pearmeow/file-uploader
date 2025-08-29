@@ -35,7 +35,7 @@
             <% } %>
             <ul>
                 <% folder.files.forEach((elem) => { %>
-                    <li><%= elem.name %></li>
+                    <li><a href="<%= elem.url %>"><%= elem.name %></a></li>
                     <form action="/folder/file/delete" method="POST">
                         <input type="hidden" name="id" value="<%= elem.id %>">
                         <button type="submit">Delete</button>
