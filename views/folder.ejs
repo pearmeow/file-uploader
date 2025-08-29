@@ -9,8 +9,10 @@
         <h1><%= title %></h1>
         <%- include("./partials/errors") %>
         <% if (locals.currentUser && locals.folder !== null) { %>
-            <p>Folder: <%= locals.folder.name %></p>
-            <p>Subfolders</p>
+            <h2>Subfolders</h2>
+            <% if (folder.subfolders.length === 0) { %>
+                <p>No subfolders found</p>
+            <% } %>
             <ul>
                 <% folder.subfolders.forEach((elem) => { %>
                     <li>
@@ -27,7 +29,10 @@
                     </li>
                 <% }) %>
             </ul>
-            <p>Files</p>
+            <h2>Files</h2>
+            <% if (folder.files.length === 0) { %>
+                <p>No files found</p>
+            <% } %>
             <ul>
                 <% folder.files.forEach((elem) => { %>
                     <li><%= elem.name %></li>
@@ -37,20 +42,20 @@
                     </form>
                 <% }) %>
             </ul>
+            <form action="/folder" method="POST">
+                <h3>Create new folder</h3>
+                <input type="hidden" name="parentId" value="<%= folder.id %>">
+                <label for="name">Name</label>
+                <input id="name" type="text" name="name">
+                <button type="submit">Submit</button>
+            </form>
             <form action="/folder/file" method="POST" enctype="multipart/form-data">
-                <p>Upload new file</p>
+                <h3>Upload new file</h3>
                 <input type="hidden" name="parentId" value="<%= folder.id %>">
                 <label for="name">Name (Optional)</label>
                 <input id="name" type="text" name="name">
                 <label for="somefile">New file</label>
                 <input id="somefile" type="file" name="somefile">
-                <button type="submit">Submit</button>
-            </form>
-            <form action="/folder" method="POST">
-                <p>Create new folder</p>
-                <input type="hidden" name="parentId" value="<%= folder.id %>">
-                <label for="name">Name</label>
-                <input id="name" type="text" name="name">
                 <button type="submit">Submit</button>
             </form>
         <% } %>
