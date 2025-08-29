@@ -32,7 +32,7 @@ const isAuthenticated = async (req, res, next) => {
 
 const getFolder = [
     isAuthenticated,
-    validateQueryId,
+    validateQueryId("folderId"),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -78,7 +78,7 @@ const createFolder = [
             });
         }
         folder = await db.getFolderById(Number(req.body.parentId));
-        if (folder.userId !== req.user.id) {
+        if (!folder || folder.userId !== req.user.id) {
             return res.redirect("/noaccess");
         }
         await db.createFolder(folder.id, req.user.id, req.body.name);
@@ -101,7 +101,7 @@ const renameFolder = [
             });
         }
         const folder = await db.getFolderById(Number(req.body.id));
-        if (req.user.id !== folder.userId || !folder) {
+        if (!folder || req.user.id !== folder.userId || !folder) {
             return res.redirect("/noaccess");
         }
         const parentId = folder.parentId;
@@ -220,7 +220,7 @@ const deleteFile = [
             });
         }
         const file = await db.getFileById(Number(req.body.id));
-        if (file.folder.userId !== req.user.id) {
+        if (!file || file.folder.userId !== req.user.id) {
             return res.redirect("/noaccess");
         }
         const err = await supabase.storage.from("files").remove(file.path);
@@ -239,9 +239,26 @@ const deleteFile = [
     },
 ];
 
+const getFile = [
+    isAuthenticated,
+    validateQueryId("fileId"),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render("file", { errors: errors.array() });
+        }
+        const file = await db.getFileById(Number(req.params.fileId));
+        if (!file || file.folder.userId !== req.user.id) {
+            return res.redirect("/noaccess");
+        }
+        res.render("file", { file: file });
+    },
+];
+
 module.exports = {
     uploadFile,
     deleteFile,
+    getFile,
     getFolder,
     createFolder,
     deleteFolder,

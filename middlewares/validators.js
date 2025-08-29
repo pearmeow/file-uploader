@@ -34,10 +34,12 @@ const validateIdFactory = (idName) => {
         .withMessage("Id must be nonnegative");
 };
 
-const validateQueryId = param("folderId")
-    .optional()
-    .isInt({ min: 0, max: Number.MAX_SAFE_INTEGER })
-    .withMessage("Id must be nonnegative");
+const validateQueryId = (fieldName) => {
+    return param(fieldName)
+        .optional()
+        .isInt({ min: 0, max: Number.MAX_SAFE_INTEGER })
+        .withMessage("Id must be nonnegative");
+};
 
 const validateNameFactory = (fieldName) => {
     return body(fieldName)
