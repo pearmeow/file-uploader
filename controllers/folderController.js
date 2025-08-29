@@ -6,6 +6,22 @@ const {
     validateNameFactory,
 } = require("../middlewares/validators");
 
+function fileFilter(req, file, cb) {
+    // test if file extension has 3 characters
+    if (/\.[A-Za-z]{3}$/.test(file.originalname)) {
+        cb(null, true);
+    }
+    cb(null, false);
+}
+
+const multer = require("multer");
+const storage = multer.memoryStorage();
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: { fileSize: 1000000 },
+});
+
 const isAuthenticated = async (req, res, next) => {
     if (!req.isAuthenticated()) {
         return res.render("folder", { title: "Folder" });
@@ -73,11 +89,7 @@ const createFolder = [
                 folder: null,
             });
         }
-        const newFolder = await db.createFolder(
-            folder.id,
-            req.user.id,
-            req.body.name,
-        );
+        await db.createFolder(folder.id, req.user.id, req.body.name);
         folder = await db.getFolderById(Number(req.body.parentId));
         res.render("folder", { title: folder.name, folder: folder });
     },
@@ -143,9 +155,21 @@ const deleteFolder = [
 ];
 
 const uploadFile = [
+    upload.single("somefile"),
     isAuthenticated,
     validateIdFactory("parentId"),
     async (req, res) => {
+        if (!req.file) {
+            return res.render("folder", {
+                title: "Error",
+                folder: null,
+                errors: [
+                    {
+                        msg: "File must have a 3 character extension and be less than 1MB in size",
+                    },
+                ],
+            });
+        }
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("folder", {
@@ -167,7 +191,8 @@ const uploadFile = [
                 folder: null,
             });
         }
-        await db.createFile(folder.id, req.body.name, req.body.url, 3);
+        // TODO: Add supabase and change url to supabase url
+        await db.createFile(folder.id, req.body.name, "meow", 3);
         folder = await db.getFolderById(Number(req.body.parentId));
         return res.render("folder", { title: folder.name, folder: folder });
     },
