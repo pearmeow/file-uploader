@@ -198,10 +198,39 @@ const uploadFile = [
     },
 ];
 
+const deleteFile = [
+    isAuthenticated,
+    validateIdFactory("id"),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render("folder", {
+                title: "Error",
+                folder: null,
+                errors: errors.array(),
+            });
+        }
+        const file = await db.getFileById(Number(req.body.id));
+        if (file.folder.userId !== req.user.id) {
+            return res.render("folder", {
+                title: "Can't delete a file you don't own!",
+                folder: null,
+            });
+        }
+        await db.deleteFileById(Number(req.body.id));
+        const folder = await db.getFolderById(file.folder.id);
+        return res.render("folder", {
+            title: folder.name,
+            folder: folder,
+        });
+    },
+];
+
 module.exports = {
+    uploadFile,
+    deleteFile,
     getFolder,
     createFolder,
-    uploadFile,
     deleteFolder,
     renameFolder,
 };

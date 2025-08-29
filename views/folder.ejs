@@ -31,6 +31,10 @@
             <ul>
                 <% folder.files.forEach((elem) => { %>
                     <li><%= elem.name %></li>
+                    <form action="/folder/file/delete" method="POST">
+                        <input type="hidden" name="id" value="<%= elem.id %>">
+                        <button type="submit">Delete</button>
+                    </form>
                 <% }) %>
             </ul>
             <form action="/folder/file" method="POST" enctype="multipart/form-data">

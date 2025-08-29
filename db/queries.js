@@ -84,6 +84,25 @@ const createFile = async (parentId, name, url, size) => {
     });
 };
 
+const getFileById = async (id) => {
+    return await client.file.findUnique({
+        where: {
+            id: id,
+        },
+        include: {
+            folder: true,
+        },
+    });
+};
+
+const deleteFileById = async (id) => {
+    return await client.file.delete({
+        where: {
+            id: id,
+        },
+    });
+};
+
 const renameFolderById = async (id, name) => {
     return await client.folder.update({
         where: {
@@ -108,8 +127,10 @@ module.exports = {
     getUserById,
     getUserByUsername,
     getFolderById,
-    createFolder,
     createFile,
+    getFileById,
+    deleteFileById,
+    createFolder,
     deleteFolderById,
     renameFolderById,
 };
