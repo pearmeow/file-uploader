@@ -6,9 +6,17 @@
     <title>Document</title>
 </head>
 <body>
+        <h1>Details</h1>
         <%- include("./partials/errors.ejs") %>
         <% if (locals.file) { %>
-            <p>File exists</p>
+            <ul>
+                <li> Name: <%= locals.file.name %> </li>
+                <li> Size: <%= locals.file.size %> kilobytes </li>
+                <li> Upload time: <%= locals.file.uploadTime %> </li>
+                <li> Parent folder name: <%= locals.file.folder.name %> </li>
+            </ul>
+            <a href="/folder/<%= locals.file.folder.id %>">Back to folder</a>
         <% } %>
+
 </body>
 </html>
