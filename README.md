@@ -26,7 +26,6 @@ Known Limitations
 -----------------
 
 Spamming buttons may break things  
-The logout button may not work on the first press  
 Files can only be up to 1MB and must have a 3 char extension
 
 Credits
