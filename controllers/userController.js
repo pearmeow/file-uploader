@@ -47,8 +47,8 @@ const getLogout = (req, res) => {
         if (err) {
             throw new Error(err);
         }
+        res.redirect("/");
     });
-    res.redirect("/");
 };
 
 const getNoAccess = (req, res) => {
